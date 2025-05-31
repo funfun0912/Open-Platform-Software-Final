@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>台鐵即時列車查詢</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #444;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a90e2;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 40px;
+        }
+
+        pre {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>台鐵車站即時查詢</h1>
+        <label for="stationID">請輸入車站代碼（如：0900 台北）：</label>
+        <input type="text" id="stationID" placeholder="輸入 StationID 代碼">
+        <button onclick="getData()">🔍 查詢即時列車</button>
+
+        <h2>📋 查詢結果</h2>
+        <pre id="result">尚未查詢</pre>
+    </div>
+
+    <footer>
+        台鐵即時列車查詢服務 © 2025
+    </footer>
+
+    <script>
+        function getData() {
+            const stationID = document.getElementById("stationID").value.trim();
+            const resultBox = document.getElementById("result");
+
+            if (!stationID) {
+                resultBox.textContent = "⚠️ 請輸入車站代碼";
+                return;
+            }
+
+            resultBox.textContent = "⏳ 查詢中，請稍候...";
+
+            const apiUrl = `https://c13c-111-243-144-124.ngrok-free.app/liveboard?station_code=${stationID}`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("API 錯誤，請確認 Station Code 是否正確");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resultBox.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    resultBox.textContent = "❌ 查詢失敗：" + error.message;
+                });
+        }
+    </script>
+</body>
+</html>
